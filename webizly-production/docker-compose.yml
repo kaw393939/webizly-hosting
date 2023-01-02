@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  webizly:
+    image: kaw393939/webizly:production
+    pull_policy: always
+    restart: always
+    networks:
+       - traefik
+    ports:
+      - "8080"
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+      - traefik.enable=true
+      - traefik.docker.network=traefik
+      - traefik.http.routers.webizly.rule=Host(`www.webizly.com`) || Host(`webizly.com`)
+      - traefik.http.routers.webizly.entrypoints=https
+      - traefik.http.routers.webizly.tls=true
+      - traefik.http.routers.webizly.tls.certresolver=simple-resolver
+      - traefik.http.services.webizly.loadbalancer.server.port=8080
+networks:
+  traefik:
+      name: traefik

@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  jenkins:
+    image: jenkins/jenkins
+    privileged: true
+    user: root
+    restart: always
+    volumes:
+       - jenkins_home:/var/jenkins_home
+       - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+       - traefik
+    ports:
+      - "50000:50000"
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik
+      - traefik.http.routers.jenkins.rule=Host(`jenk.webizly.com`)
+      - traefik.http.routers.jenkins.entrypoints=https
+      - traefik.http.routers.jenkins.tls=true
+      - traefik.http.routers.jenkins.tls.certresolver=simple-resolver
+      - traefik.http.services.jenkins.loadbalancer.server.port=8080
+networks:
+  traefik:
+      name: traefik
+volumes:
+  jenkins_home:

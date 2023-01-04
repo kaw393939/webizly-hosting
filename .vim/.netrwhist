@@ -1,8 +1,0 @@
-let g:netrw_dirhistmax  =10
-let g:netrw_dirhistcnt =6
-let g:netrw_dirhist_6='/home/ubuntu/webizly-development'
-let g:netrw_dirhist_5='/home/ubuntu'
-let g:netrw_dirhist_4='/home/ubuntu/webizly-development'
-let g:netrw_dirhist_3='/home/ubuntu/webizly-production'
-let g:netrw_dirhist_2='/home/ubuntu/webizly-development'
-let g:netrw_dirhist_1='/home/ubuntu/logstash/kibana.yml'

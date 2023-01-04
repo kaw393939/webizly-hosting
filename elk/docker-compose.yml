@@ -1,0 +1,69 @@
+version: "3.8"
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.5.3
+    restart: always
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+    networks:
+       - backend
+       - traefik
+    ports:
+      - 9200:9200
+      - 9300:9300  
+    #labels:
+      #- "traefik.enable=true"
+      #- "traefik.docker.network=backend"
+      #- "traefik.http.routers.elasticsearch.entrypoints=https"
+      #- "traefik.http.routers.elasticsearch.tls=true"
+      #- "traefik.http.routers.elasticsearch.tls.certresolver=simple-resolver"
+      #- "traefik.http.routers.elasticsearch.rule=Host(`elasticsearch`)"
+      #- "traefik.http.services.elasticsearch.loadbalancer.server.port=9200"
+  kibana:
+    image: arm64v8/kibana:8.5.3
+    restart: always
+    ports:
+      - "5601"
+    networks:
+       - traefik
+       - backend
+    depends_on:
+      - elasticsearch
+      - logstash
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://localhost:12201"
+        tag: "kibana"
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+      - "traefik.http.routers.kibana.rule=Host(`kibana.webizly.com`)"
+      - "traefik.http.routers.kibana.entrypoints=https"
+      - "traefik.http.routers.kibana.tls=true"
+      - "traefik.http.routers.kibana.tls.certresolver=simple-resolver"
+      - "traefik.http.services.kibana.loadbalancer.server.port=5601"
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.5.3
+    platform: linux/arm64/v8
+    restart: always
+    networks:
+       - backend
+    volumes:
+      - .:/etc/logstash
+    command: logstash -f /etc/logstash/logstash.conf
+    ports:
+      - 12201:12201/udp
+    depends_on:
+      - elasticsearch
+
+networks:
+  traefik:
+    name: traefik
+    external: true
+  backend:
+    external: true

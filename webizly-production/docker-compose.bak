@@ -7,12 +7,14 @@ services:
     restart: always
     networks:
        - traefik
-       - backend
+       - backend  
     ports:
       - "8080"
     environment:
       - DEPLOYMENT=production
-      - DATABASE_URL=postgresql+psycopg2://production:production@postgres:5432/production
+      - DATABASE_URL=postgresql+psycopg2://postgres:postgres@postgres:5432/postgres
+    depends_on:
+      - postgres
     logging:
       driver: gelf
       options:
@@ -27,10 +29,20 @@ services:
       - traefik.http.routers.webizly.tls=true
       - traefik.http.routers.webizly.tls.certresolver=simple-resolver
       - traefik.http.services.webizly.loadbalancer.server.port=8080
+  postgres:
+    image: postgres:15.1-bullseye
+    restart: always
+    networks:
+      - backend
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - '5432:5432'
 networks:
   traefik:
       name: traefik
       external: true
   backend:
-      name: backend
-      external: true
+    external: true

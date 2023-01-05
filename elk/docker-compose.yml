@@ -3,6 +3,7 @@ version: "3.8"
 services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.5.3
+    container_name: elasticsearch
     restart: always
     environment:
       - xpack.security.enabled=false
@@ -10,7 +11,6 @@ services:
       - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
     networks:
        - backend
-       - traefik
     ports:
       - 9200:9200
       - 9300:9300  
@@ -24,6 +24,7 @@ services:
       #- "traefik.http.services.elasticsearch.loadbalancer.server.port=9200"
   kibana:
     image: arm64v8/kibana:8.5.3
+    container_name: kibana
     restart: always
     ports:
       - "5601"
@@ -49,7 +50,8 @@ services:
       - "traefik.http.services.kibana.loadbalancer.server.port=5601"
   logstash:
     image: docker.elastic.co/logstash/logstash:8.5.3
-    platform: linux/arm64/v8
+  # platform: linux/arm64/v8
+    container_name: logstash
     restart: always
     networks:
        - backend

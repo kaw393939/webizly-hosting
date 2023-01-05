@@ -23,4 +23,5 @@ services:
       - traefik.http.routers.traefik_https.service=api@internal
 networks: 
   traefik: 
-      name: traefik 
+      name: traefik
+      external: true 

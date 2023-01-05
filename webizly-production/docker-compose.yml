@@ -3,6 +3,7 @@ version: "3.8"
 services:
   webizly:
     image: kaw393939/webizly:production
+    container_name: webizly-production
     pull_policy: always
     restart: always
     networks:

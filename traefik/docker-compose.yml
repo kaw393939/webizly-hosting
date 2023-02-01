@@ -1,0 +1,29 @@
+version: "3.8" 
+ 
+services: 
+  traefik: 
+    build: . 
+    container_name: traefik 
+    restart: always 
+    ports: 
+      - 80:80 
+      - 443:443 
+    # - 8080:8080 
+    volumes: 
+      - /var/run/docker.sock:/var/run/docker.sock:ro 
+      - /data/letsencrypt:/letsencrypt
+      - ./logs:/logs 
+    networks: 
+      - traefik 
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.traefik_https.rule=Host(`traefik.webizly.com`)
+      - traefik.http.routers.traefik_https.entrypoints=https
+      - traefik.http.routers.traefik_https.tls=true
+      - traefik.http.routers.traefik_https.tls.certResolver=simple-resolver 
+      - traefik.http.routers.traefik_https.service=api@internal
+networks: 
+  traefik: 
+      name: traefik
+      external: true
+ 

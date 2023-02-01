@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  webizly:
+    image: kaw393939/webizly:development
+    container_name: webizly-qa
+    pull_policy: always
+    restart: always
+    networks:
+       - traefik
+       - backend
+    environment:
+      - DEPLOYMENT=development
+      - DATABASE_URL=postgresql+psycopg2://development:development@postgres:5432/development
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://localhost:12201"
+        tag: "development"
+    ports:
+      - "8080"
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+      - traefik.enable=true
+      - traefik.docker.network=traefik
+      - traefik.http.routers.webizly-qa.rule=Host(`qa.webizly.com`)
+      - traefik.http.routers.webizly-qa.entrypoints=https
+      - traefik.http.routers.webizly-qa.tls=true
+      - traefik.http.routers.webizly-qa.tls.certresolver=simple-resolver
+      - traefik.http.services.webizly-qa.loadbalancer.server.port=8080
+networks:
+  traefik:
+      name: traefik
+      external: true
+  backend:
+      external: true

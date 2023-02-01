@@ -1,0 +1,21 @@
+version: '3.7'
+
+services:
+  metricbeat:
+    build: ./
+    user: root
+    container_name: metricbeat
+    volumes:
+      # - "./metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro"
+      - "/var/lib/docker/containers:/var/lib/docker/containers:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+    command: metricbeat -e
+    networks:
+      - backend
+
+networks:
+  backend:
+    name: backend
+    external: true
+    driver: bridge

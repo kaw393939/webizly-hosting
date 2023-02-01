@@ -14,7 +14,7 @@ services:
     ports:
       - 9200:9200
       - 9300:9300  
-    #labels:
+    labels:
       #- "traefik.enable=true"
       #- "traefik.docker.network=backend"
       #- "traefik.http.routers.elasticsearch.entrypoints=https"
@@ -22,6 +22,12 @@ services:
       #- "traefik.http.routers.elasticsearch.tls.certresolver=simple-resolver"
       #- "traefik.http.routers.elasticsearch.rule=Host(`elasticsearch`)"
       #- "traefik.http.services.elasticsearch.loadbalancer.server.port=9200"
+      - "co.elastic.logs/module=elasticsearch"
+      - "co.elastic.logs/fileset.stdout=access"
+      - "co.elastic.logs/fileset.stderr=error"
+      - "co.elastic.metrics/module=elasticsearch"
+      - "co.elastic.metrics/metricsets=status"
+      - "co.elastic.metrics/hosts='$${data.host}:$${data.port}'"
   kibana:
     image: arm64v8/kibana:8.5.3
     container_name: kibana

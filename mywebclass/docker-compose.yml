@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  webizly:
+    build: . 
+    container_name: mywebclass 
+    pull_policy: always
+    restart: always
+    networks:
+       - traefik
+       - backend
+    ports:
+      - "80"
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+      - traefik.enable=true
+      - traefik.docker.network=traefik
+      - traefik.http.routers.mywebclass.rule=Host(`www.mywebclass.org`) || Host(`mywebclass.org`)
+      - traefik.http.routers.mywebclass.entrypoints=https
+      - traefik.http.routers.mywebclass.tls=true
+      - traefik.http.routers.mywebclass.tls.certresolver=simple-resolver
+      - traefik.http.services.mywebclass.loadbalancer.server.port=80
+networks:
+  traefik:
+      name: traefik
+      external: true
+  backend:
+      external: true

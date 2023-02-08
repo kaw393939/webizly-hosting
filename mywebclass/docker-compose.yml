@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   webizly:
-    build: . 
+    image: kaw393939/mywebsite:master 
     container_name: mywebclass 
     pull_policy: always
     restart: always
